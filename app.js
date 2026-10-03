@@ -11,7 +11,7 @@ let seed=4187;const random=()=>{seed=seed*16807%2147483647;return(seed-1)/214748
 const dust=Array.from({length:200},()=>({x:random(),y:random(),z:random(),r:random(),phase:random()*6.28}));
 const edge=Array.from({length:1300},()=>({side:Math.floor(random()*4),t:random(),offset:(random()-.5)*.075,z:random()*.15,r:random(),phase:random()*6.28}));
 function kick(){if(!raf&&visible&&!document.hidden)raf=requestAnimationFrame(draw);}
-function readScroll(){const rect=journey.getBoundingClientRect();const navHeight=document.querySelector('.nav').offsetHeight;target=reduced?0:clamp((navHeight-rect.top)/Math.max(1,journey.offsetHeight-height));kick();}
+function readScroll(){const rect=journey.getBoundingClientRect();const navHeight=document.querySelector('.nav').offsetHeight;const track=document.querySelector('.flight-spacer');target=reduced?0:document.body.classList.contains('flight')&&track?clamp(scrollY/Math.max(1,track.offsetHeight-innerHeight)/.20):clamp((navHeight-rect.top)/Math.max(1,journey.offsetHeight-height));kick();}
 function measure(){width=scene.clientWidth;height=scene.clientHeight;const d=Math.min(devicePixelRatio||1,1.75);canvas.width=width*d;canvas.height=height*d;if(ctx)ctx.setTransform(d,0,0,d,0,0);readScroll();}
   function point(x,y,r,alpha,green){ctx.fillStyle=green?`rgba(106,191,144,${alpha})`:`rgba(213,235,220,${alpha})`;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();}
   function draw(time){raf=0;if(!ctx)return;const dt=Math.min(40,time-last||16);last=time;if(!reduced)elapsed+=dt;
@@ -57,8 +57,6 @@ motion.addEventListener('click',()=>{manual=true;reduced=!reduced;setMotion();})
 addEventListener('resize',measure);addEventListener('scroll',readScroll,{passive:true});
 document.addEventListener('visibilitychange',()=>{if(document.hidden){cancelAnimationFrame(raf);raf=0;}else{last=0;kick();}});
 new IntersectionObserver(es=>{visible=es[0].isIntersecting;if(visible){last=0;readScroll();}else{cancelAnimationFrame(raf);raf=0;}}).observe(journey);
-const menu=document.querySelector('#menu'),nav=document.querySelector('#main-nav');function closeMenu(){nav.classList.remove('open');menu.setAttribute('aria-expanded','false');}
-menu.addEventListener('click',()=>{const open=nav.classList.toggle('open');menu.setAttribute('aria-expanded',String(open));});nav.querySelectorAll('a').forEach(a=>a.addEventListener('click',closeMenu));document.addEventListener('keydown',e=>{if(e.key==='Escape'&&nav.classList.contains('open')){closeMenu();menu.focus();}});
 // Own the popup lifecycle so the vendor's alwaysShow trigger cannot open it on page load.
 const inquiry=document.querySelector('#project-inquiry'),formDialog=document.querySelector('#project-form-dialog');
 inquiry.addEventListener('click',event=>{event.preventDefault();if(formDialog.open)return;formDialog.showModal();document.body.classList.add('dialog-open');const frame=formDialog.querySelector('iframe');if(!frame.hasAttribute('src'))frame.src=frame.dataset.src;});
@@ -76,6 +74,7 @@ const items=[
 ['59983b38dca9063b','SUPERA-TE Masterclass','課程銷售頁'],
 ['1acda0f856c538fd','INiYOU Basic PNL','課程銷售頁'],
 ['c0f44ecc86adfc91','INiYOU Newsletter','訂閱頁設計示例']];
+window.kenPortfolioItems=items;
 const dialog=document.querySelector('#study');let opener;
 for(const [id,title,type]of items){const button=document.createElement('button');button.type='button';button.className='project';button.setAttribute('aria-label','查看 '+title+' 完整設計');button.innerHTML='<div class="project-image"><img loading="lazy" src="assets/portfolio/'+id+'.png" alt="'+title+'頁面設計"></div><div class="project-meta"><strong>'+title+'</strong><span>'+type+'</span></div>';document.querySelector('#project-grid').append(button);button.addEventListener('click',()=>{opener=button;document.querySelector('#study-title').textContent=title;const img=document.querySelector('#study-image');img.src='assets/portfolio/'+id+'.png';img.alt=title+'完整頁面設計';dialog.showModal();document.body.classList.add('dialog-open');});}
 dialog.querySelector('.close').addEventListener('click',()=>dialog.close());dialog.addEventListener('click',e=>{if(e.target===dialog){const r=dialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)dialog.close();}});dialog.addEventListener('close',()=>{document.body.classList.remove('dialog-open');opener?.focus();});
