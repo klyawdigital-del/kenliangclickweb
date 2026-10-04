@@ -22,6 +22,9 @@ const copy={
 '#all-work>summary':'Open portfolio · View the full designs',
 '.flight-gallery-close':'Back to the journey ×',
 '#about figcaption':'KEN LIANG / CREATOR · PRACTITIONER',
+'#proof-web dd':'Years in web design',
+'#proof-marketing dd':'Years in digital marketing',
+'#proof-funnels dd':'Sales funnels designed',
 '#about .eyebrow':'About me',
 '#about h2':'Put what you learn<br>to work in your job and business.',
 '#about>div>p:nth-of-type(2)':'I’m Ken Liang. I share practical approaches to AI, YouTube, content marketing, websites and sales processes.',
@@ -52,10 +55,11 @@ const portfolio=window.kenPortfolioItems,original=portfolio.map(row=>[...row]);l
 const title=document.title,description=document.querySelector('meta[name="description"]'),originalDescription=description.content,portrait=document.querySelector('#about img'),originalAlt=portrait.alt;
 function motionLabel(){const off=document.body.classList.contains('reduced');document.querySelector('#motion').innerHTML=language==='en'?`Motion <span>${off?'off':'on'}</span>`:`動效 <span>${off?'關':'開'}</span>`;}
 function projectTitle(index){const row=portfolio[index];document.querySelector('#study-title').textContent=row[1];document.querySelector('#study-image').alt=language==='en'?row[1]+' — full design':row[1]+'完整頁面設計';}
-function setLanguage(next){language=next==='en'?'en':'zh';const en=language==='en';document.documentElement.lang=en?'en':'zh-Hant';entries.forEach(({el,zh,en:english})=>{if(el)el.innerHTML=en?english:zh;});document.title=en?'Ken Liang | Open another door':title;description.content=en?'Practical ideas for AI, YouTube, content and digital marketing. Build another possibility for your business and your future.':originalDescription;portrait.alt=en?'Ken Liang working at his desk. Same Work. A Wider Tomorrow.':originalAlt;
+function setLanguage(next){language=next==='en'?'en':'zh';const en=language==='en';document.documentElement.lang=en?'en':'zh-Hant';entries.forEach(({el,zh,en:english})=>{if(el)el.innerHTML=en?english:zh;});document.title=en?'Ken Liang | Open another door':title;description.content=en?'Practical ideas for AI, YouTube, content and digital marketing. Build another possibility for your business and your future.':originalDescription;portrait.alt=en?'Ken Liang working at his desk with a laptop and a web design screen.':originalAlt;
 portfolio.forEach((row,i)=>{row[1]=en?englishTitles[i]:original[i][1];row[2]=en?(['Event registration page','Event registration page','Event registration page','Event registration page','Conference registration page','Course sales page','Course sales page','Course sales page','Course sales page','Newsletter design example'][i]):original[i][2];});
 document.querySelectorAll('.project').forEach((el,i)=>{el.querySelector('strong').textContent=portfolio[i][1];el.querySelector('.project-meta span').textContent=portfolio[i][2];el.setAttribute('aria-label',en?'View '+portfolio[i][1]+' full design':'查看 '+portfolio[i][1]+' 完整設計');el.querySelector('img').alt=portfolio[i][1]+(en?' page design':'頁面設計');});
 document.querySelectorAll('dialog .close').forEach(el=>el.setAttribute('aria-label',en?'Close dialog':el.closest('#study')?'關閉作品':'關閉專案表單'));document.querySelectorAll('[data-language]').forEach(el=>el.setAttribute('aria-pressed',String(el.dataset.language===language)));motionLabel();try{localStorage.setItem('ken-language',language);}catch{}window.dispatchEvent(new Event('resize'));}
 document.querySelectorAll('[data-language]').forEach(el=>el.addEventListener('click',()=>setLanguage(el.dataset.language)));document.querySelector('#motion').addEventListener('click',motionLabel);new MutationObserver(motionLabel).observe(document.body,{attributes:true,attributeFilter:['class']});document.querySelectorAll('.project').forEach((el,i)=>el.addEventListener('click',()=>projectTitle(i)));
 let saved;try{saved=localStorage.getItem('ken-language');}catch{}setLanguage(saved||'zh');
 })();
+
